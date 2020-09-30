@@ -1,5 +1,6 @@
 package android.eservices.staticfragmenttabs;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -9,7 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FragmentOne.fragmentOneInterface, FragmentTwo.fragmentTwoInterface {
 
     private ViewPager viewPager;
     private int currentCounter;
@@ -19,6 +20,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        this.counterTextView = (TextView) findViewById(R.id.counter_textview);
+        updateText();
 
         setupViewPagerAndTabs();
     }
@@ -54,11 +58,30 @@ public class MainActivity extends AppCompatActivity {
             @Nullable
             @Override
             public CharSequence getPageTitle(int position) {
-                if (position == 0) return "Onglet 1";
-                else return "Onglet 2";
+                if (position == 0) return fragmentOne.TAB_NAME;
+                else return fragmentTwo.TAB_NAME;
             }
         });
     }
 
+    public void updateText(){
+        Resources res = getResources();
+        String text = String.format(res.getString(R.string.counter_text), this.currentCounter);
+        this.counterTextView.setText(text);
+    }
+
     //TODO : increment and decrement counter, use the already provided String ressource (see strings.xml)
+    @Override
+    public void add() {
+        this.currentCounter+=1;
+        System.out.println(this.currentCounter);
+        updateText();
+    }
+
+    @Override
+    public void sub() {
+        this.currentCounter-=1;
+        System.out.println(this.currentCounter);
+        updateText();
+    }
 }
