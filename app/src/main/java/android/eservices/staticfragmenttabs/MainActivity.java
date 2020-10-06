@@ -4,17 +4,21 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 public class MainActivity extends AppCompatActivity implements FragmentOne.fragmentOneInterface, FragmentTwo.fragmentTwoInterface {
 
-    private ViewPager viewPager;
+    private ViewPager2 viewpager;
     private int currentCounter;
     private TextView counterTextView;
+    private TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,39 +33,37 @@ public class MainActivity extends AppCompatActivity implements FragmentOne.fragm
 
     //TODO fill the method to get view references and initialize viewpager to display our fragments
     private void setupViewPagerAndTabs() {
-        ViewPager viewpager = (ViewPager) findViewById(R.id.tab_viewpager);
+        viewpager = findViewById(R.id.tab_viewpager);
+        tabLayout = findViewById(R.id.tablayout);
         //TODO we want two fragments with layouts : fragment_one, fragment_two.
-        final FragmentOne fragmentOne = new FragmentOne();
-        final FragmentTwo fragmentTwo = new FragmentTwo();
+        final FragmentOne fragmentOne = FragmentOne.newInstance();
+        final FragmentTwo fragmentTwo = FragmentTwo.newInstance();
 
-        //TODO set adapter to viewpager and handle fragment change inside
-        viewpager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+        viewpager.setAdapter(new FragmentStateAdapter(this) {
+            @NonNull
             @Override
-            public Fragment getItem(int position) {
-                Fragment fragment = null;
-                switch (position) {
-                    case 0:
-                        fragment = fragmentOne;
-                        break;
-                    case 1:
-                        fragment = fragmentTwo;
-                        break;
-                }
-                return fragment;
+            public Fragment createFragment(int position) {
+                if (position == 0) return fragmentOne;
+                else return fragmentTwo;
             }
 
             @Override
-            public int getCount() {
+            public int getItemCount() {
                 return 2;
             }
 
-            @Nullable
+
+        });
+
+        TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayout, viewpager, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
-            public CharSequence getPageTitle(int position) {
-                if (position == 0) return fragmentOne.TAB_NAME;
-                else return fragmentTwo.TAB_NAME;
+            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+                if (position == 0) tab.setText(FragmentOne.TAB_NAME);
+                else tab.setText(FragmentTwo.TAB_NAME);
             }
         });
+        tabLayoutMediator.attach();
+
     }
 
     public void updateText(){

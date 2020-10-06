@@ -22,8 +22,8 @@ public class FragmentOne extends Fragment{
         //TODO
     }
 
-    public static FragmentTwo newInstance() {
-        FragmentTwo fragmentOne = new FragmentTwo();
+    public static FragmentOne newInstance() {
+        FragmentOne fragmentOne = new FragmentOne();
         /* Si on a des arguments
         Bundle args = new Bundle();
         fragmentOne.setArguments(args);
